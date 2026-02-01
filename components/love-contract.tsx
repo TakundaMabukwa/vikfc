@@ -20,6 +20,7 @@ export function LoveContract() {
   const [isDrawing, setIsDrawing] = useState(false)
   const [activeCanvas, setActiveCanvas] = useState<"vik" | "decentCrook" | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
+  const [showCelebration, setShowCelebration] = useState(false)
   const [envelopeState, setEnvelopeState] = useState<"closed" | "opening" | "open">("closed")
   const [noButtonPosition, setNoButtonPosition] = useState({ x: 0, y: 0 })
   const [accepted, setAccepted] = useState(false)
@@ -164,6 +165,12 @@ export function LoveContract() {
       img.src = dataUrl
     }
     
+    // Show celebration when Shalom signs
+    if (signatureModal === 'decentCrook') {
+      setShowCelebration(true)
+      setTimeout(() => setShowCelebration(false), 10000)
+    }
+    
     closeSignatureModal()
   }
 
@@ -241,15 +248,37 @@ export function LoveContract() {
             <span className="hidden xs:inline">Love </span>Contract
           </Button>
         )}
-        {currentPage === 1 && (
+        {currentPage === 3 && (
           <Button 
-            onClick={() => setCurrentPage(2)}
+            onClick={() => setCurrentPage(1)}
             variant="outline"
             className="bg-card/90 backdrop-blur-sm text-sm"
           >
-            <Sparkles className="w-3 h-3 mr-1 text-accent" />
-            <span className="hidden xs:inline">Valentine </span>Surprise
+            <Heart className="w-3 h-3 mr-1 text-primary fill-primary" />
+            <span className="hidden xs:inline">Love </span>Contract
           </Button>
+        )}
+        {currentPage === 1 && (
+          <>
+            <Button 
+              onClick={() => setCurrentPage(2)}
+              variant="outline"
+              className="bg-card/90 backdrop-blur-sm text-sm"
+            >
+              <Sparkles className="w-3 h-3 mr-1 text-accent" />
+              <span className="hidden xs:inline">Valentine </span>Surprise
+            </Button>
+            {signatures.vik && signatures.decentCrook && (
+              <Button 
+                onClick={() => setCurrentPage(3)}
+                variant="outline"
+                className="bg-card/90 backdrop-blur-sm text-sm"
+              >
+                <Heart className="w-3 h-3 mr-1 text-red-500 fill-red-500" />
+                <span className="hidden xs:inline">Our </span>Love
+              </Button>
+            )}
+          </>
         )}
         <Button 
           onClick={handlePrint}
@@ -943,6 +972,56 @@ export function LoveContract() {
             <p className="text-muted-foreground text-xs mt-1">
               Vik FC Official Documents - Est. with Love
             </p>
+          </div>
+        </div>
+      )}
+
+      {/* Page 3 - Our Love (Only visible when both signed) */}
+      {currentPage === 3 && signatures.vik && signatures.decentCrook && (
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-card rounded-lg shadow-2xl border-4 border-primary/20 overflow-hidden min-h-[80vh] flex flex-col items-center justify-center p-4 sm:p-8 relative">
+            <div className="text-center space-y-6 relative z-10">
+              <h1 className="font-serif text-4xl sm:text-6xl font-bold text-primary">
+                Forever Starts Now
+              </h1>
+              <div className="flex justify-center">
+                <img 
+                  src="/sv.jpg" 
+                  alt="Our Love" 
+                  className="max-w-full h-auto rounded-2xl shadow-2xl border-4 border-primary/30 max-h-[60vh] object-contain"
+                />
+              </div>
+              <p className="text-xl sm:text-2xl text-foreground/80 font-serif italic max-w-2xl mx-auto">
+                Two signatures, one heart, infinite love.
+              </p>
+              <div className="flex justify-center gap-2">
+                {[...Array(9)].map((_, i) => (
+                  <Heart 
+                    key={i} 
+                    className="w-6 h-6 sm:w-8 sm:h-8 text-red-500 fill-red-500 animate-pulse" 
+                    style={{ animationDelay: `${i * 100}ms` }}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Celebration Modal */}
+      {showCelebration && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm">
+          <div className="text-center space-y-6 animate-[fadeInUp_0.5s_ease-out]">
+            <h1 className="text-6xl sm:text-8xl font-serif font-bold text-white animate-bounce">
+              Yeeei! 🎉
+            </h1>
+            <div className="animate-[pulse_2s_ease-in-out_infinite]">
+              <img 
+                src="/sv.jpg" 
+                alt="Celebration" 
+                className="w-64 h-64 sm:w-96 sm:h-96 object-cover rounded-2xl shadow-2xl border-4 border-white"
+              />
+            </div>
           </div>
         </div>
       )}
