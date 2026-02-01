@@ -8,9 +8,9 @@ const _playfair = Playfair_Display({ subsets: ["latin"], variable: '--font-serif
 const _cormorant = Cormorant_Garamond({ subsets: ["latin"], weight: ['400', '500', '600', '700'], variable: '--font-sans' });
 
 export const metadata: Metadata = {
-  title: 'Permanent Love Contract',
-  description: 'A romantic proposal for forever',
-  generator: 'v0.app',
+  title: 'Permanent Contract',
+  description: 'Forever yours, not 90 years like the other guy once said. 😉',
+  generator: 'Vik',
   icons: {
     icon: [
       {

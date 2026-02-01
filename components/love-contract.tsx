@@ -3,7 +3,8 @@
 import React from "react"
 import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Heart, Printer, Sparkles, Gift, Car, PartyPopper } from "lucide-react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Heart, Printer, Sparkles, Gift, Car, PartyPopper, X } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 
 interface SignatureData {
@@ -22,8 +23,10 @@ export function LoveContract() {
   const [envelopeState, setEnvelopeState] = useState<"closed" | "opening" | "open">("closed")
   const [noButtonPosition, setNoButtonPosition] = useState({ x: 0, y: 0 })
   const [accepted, setAccepted] = useState(false)
+  const [signatureModal, setSignatureModal] = useState<"vik" | "decentCrook" | null>(null)
   const vikCanvasRef = useRef<HTMLCanvasElement>(null)
   const crookCanvasRef = useRef<HTMLCanvasElement>(null)
+  const modalCanvasRef = useRef<HTMLCanvasElement>(null)
   const contractRef = useRef<HTMLDivElement>(null)
   const noButtonRef = useRef<HTMLButtonElement>(null)
   const supabase = createClient()
@@ -69,17 +72,16 @@ export function LoveContract() {
     return type === "vik" ? vikCanvasRef : crookCanvasRef
   }
 
-  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>, type: "vik" | "decentCrook") => {
-    if (signatures[type]) return // Already signed
+  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+    e.preventDefault()
     setIsDrawing(true)
-    setActiveCanvas(type)
-    const canvas = getCanvasRef(type).current
+    const canvas = modalCanvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext("2d")
     if (!ctx) return
     
     ctx.strokeStyle = "#8B2942"
-    ctx.lineWidth = 2
+    ctx.lineWidth = 3
     ctx.lineCap = "round"
     ctx.lineJoin = "round"
     
@@ -92,8 +94,9 @@ export function LoveContract() {
   }
 
   const draw = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
-    if (!isDrawing || !activeCanvas) return
-    const canvas = getCanvasRef(activeCanvas).current
+    e.preventDefault()
+    if (!isDrawing) return
+    const canvas = modalCanvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext("2d")
     if (!ctx) return
@@ -108,16 +111,35 @@ export function LoveContract() {
 
   const stopDrawing = () => {
     setIsDrawing(false)
-    setActiveCanvas(null)
   }
 
-  const saveSignature = async (type: "vik" | "decentCrook") => {
-    const canvas = getCanvasRef(type).current
+  const openSignatureModal = (type: "vik" | "decentCrook") => {
+    if (signatures[type]) return
+    setSignatureModal(type)
+    setTimeout(() => {
+      const canvas = modalCanvasRef.current
+      if (canvas) {
+        const ctx = canvas.getContext("2d")
+        if (ctx) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height)
+        }
+      }
+    }, 100)
+  }
+
+  const closeSignatureModal = () => {
+    setSignatureModal(null)
+    setIsDrawing(false)
+  }
+
+  const saveSignature = async () => {
+    if (!signatureModal) return
+    const canvas = modalCanvasRef.current
     if (!canvas) return
     const dataUrl = canvas.toDataURL()
     
-    const field = type === 'vik' ? 'vik_signature' : 'shalom_signature'
-    const timestampField = type === 'vik' ? 'vik_signed_at' : 'shalom_signed_at'
+    const field = signatureModal === 'vik' ? 'vik_signature' : 'shalom_signature'
+    const timestampField = signatureModal === 'vik' ? 'vik_signed_at' : 'shalom_signed_at'
     
     await supabase
       .from('signatures')
@@ -127,8 +149,27 @@ export function LoveContract() {
         [timestampField]: new Date().toISOString()
       })
     
-    const newSignatures = { ...signatures, [type]: dataUrl }
+    const newSignatures = { ...signatures, [signatureModal]: dataUrl }
     setSignatures(newSignatures)
+    
+    // Copy to display canvas
+    const displayCanvas = getCanvasRef(signatureModal).current
+    if (displayCanvas) {
+      const ctx = displayCanvas.getContext("2d")
+      const img = new Image()
+      img.onload = () => ctx?.drawImage(img, 0, 0)
+      img.src = dataUrl
+    }
+    
+    closeSignatureModal()
+  }
+
+  const clearModalSignature = () => {
+    const canvas = modalCanvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext("2d")
+    if (!ctx) return
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
   }
 
   const clearSignature = async (type: "vik" | "decentCrook") => {
@@ -459,48 +500,36 @@ export function LoveContract() {
                   <label className="font-serif text-base sm:text-lg font-semibold text-foreground block text-center">
                     Vik (Takunda/Taku)
                   </label>
-                  <div className="relative">
+                  <div 
+                    className={`relative w-full h-24 border-2 rounded-lg bg-card ${
+                      signatures.vik 
+                        ? "border-primary/40" 
+                        : "border-dashed border-primary/30 cursor-pointer hover:border-primary/50"
+                    }`}
+                    onClick={() => openSignatureModal("vik")}
+                  >
                     <canvas
                       ref={vikCanvasRef}
                       width={280}
                       height={100}
-                      className={`w-full h-24 border-2 rounded-lg bg-card ${
-                        signatures.vik 
-                          ? "border-primary/40" 
-                          : "border-dashed border-primary/30 cursor-crosshair"
-                      }`}
-                      onMouseDown={(e) => startDrawing(e, "vik")}
-                      onMouseMove={draw}
-                      onMouseUp={stopDrawing}
-                      onMouseLeave={stopDrawing}
-                      onTouchStart={(e) => startDrawing(e, "vik")}
-                      onTouchMove={draw}
-                      onTouchEnd={stopDrawing}
+                      className="w-full h-full pointer-events-none"
                     />
                     {!signatures.vik && (
                       <p className="absolute inset-0 flex items-center justify-center text-muted-foreground/50 pointer-events-none text-sm">
-                        Sign here...
+                        Tap to sign...
                       </p>
                     )}
                   </div>
-                  <div className="flex gap-2 print:hidden">
+                  {signatures.vik && (
                     <Button
                       size="sm"
                       variant="outline"
                       onClick={() => clearSignature("vik")}
-                      className="flex-1 bg-transparent"
+                      className="w-full print:hidden"
                     >
-                      Clear
+                      Clear Signature
                     </Button>
-                    <Button
-                      size="sm"
-                      onClick={() => saveSignature("vik")}
-                      disabled={!!signatures.vik}
-                      className="flex-1 bg-primary text-primary-foreground"
-                    >
-                      {signatures.vik ? "Signed" : "Save"}
-                    </Button>
-                  </div>
+                  )}
                 </div>
 
                 {/* Decent Crook's Signature */}
@@ -508,48 +537,36 @@ export function LoveContract() {
                   <label className="font-serif text-base sm:text-lg font-semibold text-foreground block text-center">
                     Shalom (Decent Crook)
                   </label>
-                  <div className="relative">
+                  <div 
+                    className={`relative w-full h-24 border-2 rounded-lg bg-card ${
+                      signatures.decentCrook 
+                        ? "border-primary/40" 
+                        : "border-dashed border-primary/30 cursor-pointer hover:border-primary/50"
+                    }`}
+                    onClick={() => openSignatureModal("decentCrook")}
+                  >
                     <canvas
                       ref={crookCanvasRef}
                       width={280}
                       height={100}
-                      className={`w-full h-24 border-2 rounded-lg bg-card ${
-                        signatures.decentCrook 
-                          ? "border-primary/40" 
-                          : "border-dashed border-primary/30 cursor-crosshair"
-                      }`}
-                      onMouseDown={(e) => startDrawing(e, "decentCrook")}
-                      onMouseMove={draw}
-                      onMouseUp={stopDrawing}
-                      onMouseLeave={stopDrawing}
-                      onTouchStart={(e) => startDrawing(e, "decentCrook")}
-                      onTouchMove={draw}
-                      onTouchEnd={stopDrawing}
+                      className="w-full h-full pointer-events-none"
                     />
                     {!signatures.decentCrook && (
                       <p className="absolute inset-0 flex items-center justify-center text-muted-foreground/50 pointer-events-none text-sm">
-                        Sign here...
+                        Tap to sign...
                       </p>
                     )}
                   </div>
-                  <div className="flex gap-2 print:hidden">
+                  {signatures.decentCrook && (
                     <Button
                       size="sm"
                       variant="outline"
                       onClick={() => clearSignature("decentCrook")}
-                      className="flex-1 bg-transparent"
+                      className="w-full print:hidden"
                     >
-                      Clear
+                      Clear Signature
                     </Button>
-                    <Button
-                      size="sm"
-                      onClick={() => saveSignature("decentCrook")}
-                      disabled={!!signatures.decentCrook}
-                      className="flex-1 bg-primary text-primary-foreground"
-                    >
-                      {signatures.decentCrook ? "Signed" : "Save"}
-                    </Button>
-                  </div>
+                  )}
                 </div>
               </div>
 
@@ -922,6 +939,52 @@ export function LoveContract() {
           </div>
         </div>
       )}
+
+      {/* Signature Modal */}
+      <Dialog open={!!signatureModal} onOpenChange={(open) => !open && closeSignatureModal()}>
+        <DialogContent className="max-w-lg w-[95vw] p-0">
+          <DialogHeader className="p-4 pb-2">
+            <DialogTitle className="font-serif text-xl text-center">
+              Sign Here - {signatureModal === "vik" ? "Vik (Takunda/Taku)" : "Shalom (Decent Crook)"}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="p-4 space-y-4">
+            <div className="relative bg-card border-2 border-primary/30 rounded-lg overflow-hidden">
+              <canvas
+                ref={modalCanvasRef}
+                width={600}
+                height={300}
+                className="w-full touch-none"
+                style={{ touchAction: 'none' }}
+                onMouseDown={startDrawing}
+                onMouseMove={draw}
+                onMouseUp={stopDrawing}
+                onMouseLeave={stopDrawing}
+                onTouchStart={startDrawing}
+                onTouchMove={draw}
+                onTouchEnd={stopDrawing}
+              />
+            </div>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                onClick={clearModalSignature}
+                className="flex-1"
+              >
+                <X className="w-4 h-4 mr-2" />
+                Clear
+              </Button>
+              <Button
+                onClick={saveSignature}
+                className="flex-1 bg-primary text-primary-foreground"
+              >
+                <Heart className="w-4 h-4 mr-2 fill-current" />
+                Save Signature
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Custom Animations & Print styles */}
       <style jsx global>{`
