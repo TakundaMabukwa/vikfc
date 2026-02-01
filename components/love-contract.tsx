@@ -55,21 +55,8 @@ export function LoveContract() {
 
   // Restore canvas images when signatures change
   useEffect(() => {
-    if (signatures.vik && vikCanvasRef.current) {
-      const ctx = vikCanvasRef.current.getContext("2d")
-      const img = new Image()
-      img.crossOrigin = "anonymous"
-      img.onload = () => ctx?.drawImage(img, 0, 0)
-      img.src = signatures.vik
-    }
-    if (signatures.decentCrook && crookCanvasRef.current) {
-      const ctx = crookCanvasRef.current.getContext("2d")
-      const img = new Image()
-      img.crossOrigin = "anonymous"
-      img.onload = () => ctx?.drawImage(img, 0, 0)
-      img.src = signatures.decentCrook
-    }
-  }, [signatures, currentPage])
+    // No longer needed - using img tags instead
+  }, [])
 
   const getCanvasRef = (type: "vik" | "decentCrook") => {
     return type === "vik" ? vikCanvasRef : crookCanvasRef
@@ -157,15 +144,6 @@ export function LoveContract() {
     
     const newSignatures = { ...signatures, [signatureModal]: dataUrl }
     setSignatures(newSignatures)
-    
-    // Copy to display canvas
-    const displayCanvas = getCanvasRef(signatureModal).current
-    if (displayCanvas) {
-      const ctx = displayCanvas.getContext("2d")
-      const img = new Image()
-      img.onload = () => ctx?.drawImage(img, 0, 0)
-      img.src = dataUrl
-    }
     
     // Show celebration when Shalom signs
     if (signatureModal === 'decentCrook') {
@@ -542,16 +520,20 @@ export function LoveContract() {
                     }`}
                     onClick={() => openSignatureModal("vik")}
                   >
-                    <canvas
-                      ref={vikCanvasRef}
-                      width={280}
-                      height={100}
-                      className="w-full h-full pointer-events-none"
-                    />
-                    {!signatures.vik && (
-                      <p className="absolute inset-0 flex items-center justify-center text-muted-foreground/50 pointer-events-none text-sm">
-                        Tap to sign...
-                      </p>
+                    {signatures.vik ? (
+                      <img src={signatures.vik} alt="Vik's signature" className="w-full h-full object-contain" />
+                    ) : (
+                      <>
+                        <canvas
+                          ref={vikCanvasRef}
+                          width={280}
+                          height={100}
+                          className="w-full h-full pointer-events-none"
+                        />
+                        <p className="absolute inset-0 flex items-center justify-center text-muted-foreground/50 pointer-events-none text-sm">
+                          Tap to sign...
+                        </p>
+                      </>
                     )}
                   </div>
                   {signatures.vik && (
@@ -579,16 +561,20 @@ export function LoveContract() {
                     }`}
                     onClick={() => openSignatureModal("decentCrook")}
                   >
-                    <canvas
-                      ref={crookCanvasRef}
-                      width={280}
-                      height={100}
-                      className="w-full h-full pointer-events-none"
-                    />
-                    {!signatures.decentCrook && (
-                      <p className="absolute inset-0 flex items-center justify-center text-muted-foreground/50 pointer-events-none text-sm">
-                        Tap to sign...
-                      </p>
+                    {signatures.decentCrook ? (
+                      <img src={signatures.decentCrook} alt="Shalom's signature" className="w-full h-full object-contain" />
+                    ) : (
+                      <>
+                        <canvas
+                          ref={crookCanvasRef}
+                          width={280}
+                          height={100}
+                          className="w-full h-full pointer-events-none"
+                        />
+                        <p className="absolute inset-0 flex items-center justify-center text-muted-foreground/50 pointer-events-none text-sm">
+                          Tap to sign...
+                        </p>
+                      </>
                     )}
                   </div>
                   {signatures.decentCrook && (
