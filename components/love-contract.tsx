@@ -48,26 +48,28 @@ export function LoveContract() {
         }
         setSignatures(loadedSignatures)
         setAccepted(data.valentine_accepted || false)
-        
-        // Restore canvas images
-        if (data.vik_signature && vikCanvasRef.current) {
-          const ctx = vikCanvasRef.current.getContext("2d")
-          const img = new Image()
-          img.crossOrigin = "anonymous"
-          img.onload = () => ctx?.drawImage(img, 0, 0)
-          img.src = data.vik_signature
-        }
-        if (data.shalom_signature && crookCanvasRef.current) {
-          const ctx = crookCanvasRef.current.getContext("2d")
-          const img = new Image()
-          img.crossOrigin = "anonymous"
-          img.onload = () => ctx?.drawImage(img, 0, 0)
-          img.src = data.shalom_signature
-        }
       }
     }
     loadSignatures()
   }, [])
+
+  // Restore canvas images when signatures change
+  useEffect(() => {
+    if (signatures.vik && vikCanvasRef.current) {
+      const ctx = vikCanvasRef.current.getContext("2d")
+      const img = new Image()
+      img.crossOrigin = "anonymous"
+      img.onload = () => ctx?.drawImage(img, 0, 0)
+      img.src = signatures.vik
+    }
+    if (signatures.decentCrook && crookCanvasRef.current) {
+      const ctx = crookCanvasRef.current.getContext("2d")
+      const img = new Image()
+      img.crossOrigin = "anonymous"
+      img.onload = () => ctx?.drawImage(img, 0, 0)
+      img.src = signatures.decentCrook
+    }
+  }, [signatures, currentPage])
 
   const getCanvasRef = (type: "vik" | "decentCrook") => {
     return type === "vik" ? vikCanvasRef : crookCanvasRef
