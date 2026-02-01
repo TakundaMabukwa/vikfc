@@ -74,11 +74,12 @@ export function LoveContract() {
 
   const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
     e.preventDefault()
-    setIsDrawing(true)
     const canvas = modalCanvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext("2d")
     if (!ctx) return
+    
+    setIsDrawing(true)
     
     ctx.strokeStyle = "#8B2942"
     ctx.lineWidth = 3
@@ -875,10 +876,14 @@ export function LoveContract() {
             {accepted && (
               <div className="text-center space-y-6 animate-[fadeInUp_0.8s_ease-out] relative z-10">
                 <div className="flex justify-center">
-                  <div className="relative">
-                    <Heart className="w-24 h-24 sm:w-32 sm:h-32 text-primary fill-primary animate-pulse" />
-                    <Sparkles className="absolute top-0 right-0 w-8 h-8 text-yellow-500 animate-bounce" />
-                    <Sparkles className="absolute bottom-0 left-0 w-8 h-8 text-yellow-500 animate-bounce" style={{ animationDelay: "300ms" }} />
+                  <div className="relative animate-bounce">
+                    <img 
+                      src="/stitch.png" 
+                      alt="Stitch" 
+                      className="w-32 h-32 sm:w-48 sm:h-48 object-contain drop-shadow-2xl"
+                    />
+                    <Sparkles className="absolute top-0 right-0 w-8 h-8 text-yellow-500 animate-pulse" />
+                    <Sparkles className="absolute bottom-0 left-0 w-8 h-8 text-yellow-500 animate-pulse" style={{ animationDelay: "300ms" }} />
                   </div>
                 </div>
                 <h2 className="font-serif text-3xl sm:text-5xl font-bold text-primary">
