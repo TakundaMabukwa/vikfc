@@ -108,6 +108,8 @@ export function LoveContract() {
     
     ctx.lineTo(x, y)
     ctx.stroke()
+    ctx.beginPath()
+    ctx.moveTo(x, y)
   }
 
   const stopDrawing = () => {
@@ -280,10 +282,10 @@ export function LoveContract() {
             </div>
             
             <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-primary tracking-wide">
-              Permanent Love Contract
+              Permanent Contract
             </h1>
             <p className="text-muted-foreground mt-2 text-base sm:text-lg italic">
-              Official Girlfriend Agreement
+              Official Agreement
             </p>
             <div className="flex justify-center items-center gap-2 mt-3">
               <Heart className="w-4 h-4 text-primary fill-primary" />
@@ -309,7 +311,7 @@ export function LoveContract() {
                 {"\""}If you would have me, I would love to sign you on a <span className="underline decoration-wavy decoration-accent">permanent contract</span>.{"\""}
               </p>
               <p className="text-base sm:text-lg text-muted-foreground mt-3 italic">
-                No loan deals, no transfers, no release clauses. Just forever.
+                No loan deals, no transfers, no release clauses. Just forever. Damn, forever sounds like a long time though 🤔
               </p>
             </div>
 
@@ -353,7 +355,7 @@ export function LoveContract() {
                 Article III: Future Family Planning
               </h2>
               <p className="text-foreground/90 leading-relaxed text-base sm:text-lg">
-                We already have our lovely fur babies — <strong>Lala, Tasha, Mooshie, and Looshie</strong>. 
+                Cant believe we are already parents of 4 — <strong>Lala, Tasha, Mooshie, and Looshie</strong>. 😅
                 But I{"'"}d love to expand our little family even more. More chaos, more love, more tiny paws running around.
               </p>
               <p className="text-foreground/90 leading-relaxed text-base sm:text-lg">
@@ -536,7 +538,7 @@ export function LoveContract() {
                 {/* Decent Crook's Signature */}
                 <div className="space-y-3">
                   <label className="font-serif text-base sm:text-lg font-semibold text-foreground block text-center">
-                    Shalom (Decent Crook)
+                    Shalom aka Gangster (Decent Crook)
                   </label>
                   <div 
                     className={`relative w-full h-24 border-2 rounded-lg bg-card ${
@@ -585,7 +587,7 @@ export function LoveContract() {
             {/* P.S. */}
             <div className="bg-gradient-to-r from-primary/5 via-accent/5 to-primary/5 p-4 sm:p-6 rounded-xl border border-primary/20 text-center">
               <p className="text-primary font-serif text-base sm:text-lg">
-                P.S. I love you, Decent Crook. Will you be my forever girlfriend?
+                P.S. I love you, Decent Crook. Will you be my girlfriend?
               </p>
               <div className="flex justify-center mt-3">
                 <Heart className="w-8 h-8 text-primary fill-primary animate-pulse" />
@@ -678,10 +680,10 @@ export function LoveContract() {
             <div className="text-center mb-6 sm:mb-8 relative z-10">
               <div className="inline-block bg-gradient-to-r from-primary/20 via-accent/20 to-primary/20 px-4 sm:px-6 py-2 rounded-full border-2 border-primary/30">
                 <p className="font-serif text-base sm:text-lg text-primary font-semibold">
-                  From: Lala & Tasha
+                  From: Lala, Tasha & Dad/Daddy
                 </p>
                 <p className="text-xs sm:text-sm text-muted-foreground italic">
-                  (With love from your fur babies)
+                  (With love from your fur babies and their father) 😉
                 </p>
               </div>
             </div>
@@ -814,7 +816,7 @@ export function LoveContract() {
 
                         {/* Main Message */}
                         <div className="space-y-2">
-                          <p className="text-muted-foreground text-sm sm:text-base">Dearest Shalom,</p>
+                          <p className="text-muted-foreground text-sm sm:text-base">Dearest Gangster,</p>
                           <h2 className="font-serif text-3xl sm:text-5xl font-bold text-primary leading-tight">
                             Will You Be My Valentine?
                           </h2>
@@ -889,10 +891,10 @@ export function LoveContract() {
                 <h2 className="font-serif text-3xl sm:text-5xl font-bold text-primary">
                   She Said Yes!
                 </h2>
-                <p className="text-lg sm:text-xl text-foreground/80 font-serif italic max-w-md mx-auto">
+                {/* <p className="text-lg sm:text-xl text-foreground/80 font-serif italic max-w-md mx-auto">
                   And just like that, the world got a little brighter, my heart got a little fuller, 
                   and our story began its most beautiful chapter yet.
-                </p>
+                </p> */}
                 <div className="flex justify-center gap-2">
                   {[...Array(7)].map((_, i) => (
                     <Heart 
@@ -950,7 +952,7 @@ export function LoveContract() {
         <DialogContent className="max-w-lg w-[95vw] p-0">
           <DialogHeader className="p-4 pb-2">
             <DialogTitle className="font-serif text-xl text-center">
-              Sign Here - {signatureModal === "vik" ? "Vik (Takunda/Taku)" : "Shalom (Decent Crook)"}
+              Sign Here - {signatureModal === "vik" ? "Vik (Takunda/Taku)" : "Shalom - (Decent Crook)"}
             </DialogTitle>
           </DialogHeader>
           <div className="p-4 space-y-4">
