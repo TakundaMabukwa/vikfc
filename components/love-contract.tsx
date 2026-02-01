@@ -515,7 +515,7 @@ export function LoveContract() {
                     onClick={() => openSignatureModal("vik")}
                   >
                     {signatures.vik ? (
-                      <img src={signatures.vik} alt="Vik's signature" className="w-full h-full object-cover" />
+                      <img src={signatures.vik} alt="Vik's signature" className="w-full h-full object-contain" />
                     ) : (
                       <>
                         <canvas
@@ -556,7 +556,7 @@ export function LoveContract() {
                     onClick={() => openSignatureModal("decentCrook")}
                   >
                     {signatures.decentCrook ? (
-                      <img src={signatures.decentCrook} alt="Shalom's signature" className="w-full h-full object-cover" />
+                      <img src={signatures.decentCrook} alt="Shalom's signature" className="w-full h-full object-contain" />
                     ) : (
                       <>
                         <canvas
