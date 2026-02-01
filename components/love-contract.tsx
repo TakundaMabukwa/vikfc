@@ -163,12 +163,6 @@ export function LoveContract() {
   }
 
   const clearSignature = async (type: "vik" | "decentCrook") => {
-    const canvas = getCanvasRef(type).current
-    if (!canvas) return
-    const ctx = canvas.getContext("2d")
-    if (!ctx) return
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
-    
     const field = type === 'vik' ? 'vik_signature' : 'shalom_signature'
     const timestampField = type === 'vik' ? 'vik_signed_at' : 'shalom_signed_at'
     
@@ -521,7 +515,7 @@ export function LoveContract() {
                     onClick={() => openSignatureModal("vik")}
                   >
                     {signatures.vik ? (
-                      <img src={signatures.vik} alt="Vik's signature" className="w-full h-full object-contain" />
+                      <img src={signatures.vik} alt="Vik's signature" className="w-full h-full object-cover" />
                     ) : (
                       <>
                         <canvas
@@ -562,7 +556,7 @@ export function LoveContract() {
                     onClick={() => openSignatureModal("decentCrook")}
                   >
                     {signatures.decentCrook ? (
-                      <img src={signatures.decentCrook} alt="Shalom's signature" className="w-full h-full object-contain" />
+                      <img src={signatures.decentCrook} alt="Shalom's signature" className="w-full h-full object-cover" />
                     ) : (
                       <>
                         <canvas
